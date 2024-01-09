@@ -2,37 +2,53 @@ const input = document.querySelector('#date');
 const calculated = document.querySelector('#Calculated');
 const button = document.querySelector('#btn');
 
-button.addEventListener('click', () => {
+function calculateAge() {
     const inputValue = input.value;
 
     if (inputValue) {
         const birthDay = new Date(inputValue);
         const currentDate = new Date();
 
-        const ageYear = currentDate.getFullYear() - birthDay.getFullYear();
-        const ageMonth = currentDate.getMonth() - birthDay.getMonth();
-        const ageDay = currentDate.getDate() - birthDay.getDate();
+        let ageYear = currentDate.getFullYear() - birthDay.getFullYear();
+        let ageMonth = currentDate.getMonth() - birthDay.getMonth();
+        let ageDay = currentDate.getDate() - birthDay.getDate();
+
+        // Adjust negative values
+        if (ageDay < 0) {
+            const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+            ageDay += lastMonth.getDate();
+            ageMonth--;
+        }
+
+        if (ageMonth < 0) {
+            ageMonth += 12;
+            ageYear--;
+        }
 
         let result = '';
 
         if (ageYear !== 0) {
-            result += `${ageYear} Year`;
-            if (ageYear !== 1) {
-                result += 's';
+            result += `${ageYear} Year${ageYear !== 1 ? 's' : ''}`;
+            if (ageMonth !== 0 || ageDay !== 0) {
+                result += ' and ';
             }
-            result += ' and ';
         }
 
         if (ageMonth !== 0) {
-            result += `${ageMonth} Month`;
-            if (ageMonth !== 1) {
-                result += 's';
+            result += `${ageMonth} Month${ageMonth !== 1 ? 's' : ''}`;
+            if (ageDay !== 0) {
+                result += ' and ';
             }
-            result += ' and ';
         }
 
-        result += `${ageDay} Day`;
+        if (ageDay !== 0) {
+            result += `${ageDay} Day${ageDay !== 1 ? 's' : ''}`;
+        }
 
-        calculated.innerHTML = result;
+        calculated.innerHTML = `Your age is approximately ${result}.`;
     }
+}
+
+button.addEventListener('click', () => {
+    calculateAge();
 });
